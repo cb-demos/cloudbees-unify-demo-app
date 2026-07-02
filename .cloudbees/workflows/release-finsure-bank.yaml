@@ -24,6 +24,25 @@ on:
         type: string
         default: Saturday 22:00-23:00 ET
 
+metadata:
+  stages/v1alpha1:
+    - name: Governance
+      jobs:
+        - governance-review
+    - name: Staging
+      jobs:
+        - deploy-staging
+        - staging-validation
+    - name: Production Approval
+      jobs:
+        - production-approval
+    - name: Production
+      jobs:
+        - deploy-production
+    - name: Post-Release
+      jobs:
+        - release-evidence
+
 jobs:
   governance-review:
     steps:
