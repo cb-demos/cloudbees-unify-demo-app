@@ -1,0 +1,18 @@
+policy:
+  name: production-approval-policy
+  description: Mock policy for discussing production governance in a CloudBees Unify demo
+  appliesTo:
+    environments:
+      - prod
+  requirements:
+    approvals:
+      minimumApprovers: 2
+      approverGroups:
+        - release-management
+        - security
+    evidence:
+      - successful-ci-run
+      - zero-critical-vulnerabilities
+      - change-ticket-linked
+      - staging-validation-passed
+  demoTalkingPoint: Use this to explain governance without slowing down developers.

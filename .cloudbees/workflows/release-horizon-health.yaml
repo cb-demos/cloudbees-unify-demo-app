@@ -1,0 +1,139 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: horizon-health-standard-release
+
+# Standardized "golden path" release orchestration demo for Horizon Health Systems.
+# Lives in the APPLICATION repo (separate from the component/CI repo).
+# Fully self-contained: every step is mock/echo and each job publishes a
+# Markdown evidence item to the run's Evidence tab. Runs green in any
+# CloudBees Unify org with no clusters, secrets, or integrations required.
+# Story: golden-path check -> QA -> automated validation -> staging -> summary.
+# Note: for this scenario payments-api is intentionally NOT deployed.
+
+on:
+  workflow_dispatch:
+    inputs:
+      clinical_system:
+        type: choice
+        options:
+          - patient-portal
+          - scheduling
+          - research-data
+        default: patient-portal
+
+jobs:
+  platform-golden-path:
+    steps:
+      - name: Validate standard workflow usage
+        uses: docker://alpine:3.20
+        shell: sh
+        run: |
+          echo "== Horizon Health standard release path =="
+          echo "Clinical system: ${{ inputs.clinical_system }}"
+          echo "Components:      orders-api:1.4.0, web-frontend:3.2.0 (payments-api: not deployed)"
+          echo "Checking reusable platform-workflow adoption..."
+          echo "Checking required health-data governance controls..."
+          echo "Golden path: VALIDATED"
+      - name: Publish evidence
+        uses: https://github.com/cloudbees-io/publish-evidence-item@v1
+        with:
+          content: |-
+            ## Golden-path validation — Horizon Health
+            - Clinical system: ${{ inputs.clinical_system }}
+            - Components: orders-api:1.4.0, web-frontend:3.2.0 (payments-api not deployed)
+            - Reusable platform-workflow adoption: confirmed
+            - Health-data governance controls: present
+            - Status: **validated**
+
+  deploy-qa:
+    needs:
+      - platform-golden-path
+    steps:
+      - name: Deploy release to QA
+        uses: docker://alpine:3.20
+        shell: sh
+        run: |
+          echo "Deploying Horizon Health release to QA"
+          for component in orders-api:1.4.0 web-frontend:3.2.0; do
+            echo "  -> deploying $component"
+          done
+          echo "QA deployment: SUCCESS"
+      - name: Publish evidence
+        uses: https://github.com/cloudbees-io/publish-evidence-item@v1
+        with:
+          content: |-
+            ## QA deployment
+            - Environment: qa
+            - orders-api:1.4.0 — deployed
+            - web-frontend:3.2.0 — deployed
+            - Status: **success**
+
+  automated-validation:
+    needs:
+      - deploy-qa
+    steps:
+      - name: Run targeted tests
+        uses: docker://alpine:3.20
+        shell: sh
+        run: |
+          echo "Running targeted regression suite..."
+          echo "Running API contract tests..."
+          echo "Running compliance smoke checks..."
+          echo "Validation: PASSED"
+      - name: Publish evidence
+        uses: https://github.com/cloudbees-io/publish-evidence-item@v1
+        with:
+          content: |-
+            ## Automated validation
+            - Targeted regression suite: passed
+            - API contract tests: passed
+            - Compliance smoke checks: passed
+            - Status: **passed**
+
+  deploy-staging:
+    needs:
+      - automated-validation
+    steps:
+      - name: Deploy release to staging
+        uses: docker://alpine:3.20
+        shell: sh
+        run: |
+          echo "Deploying Horizon Health release to STAGING"
+          for component in orders-api:1.4.0 web-frontend:3.2.0; do
+            echo "  -> deploying $component"
+          done
+          echo "Staging deployment: SUCCESS"
+      - name: Publish evidence
+        uses: https://github.com/cloudbees-io/publish-evidence-item@v1
+        with:
+          content: |-
+            ## Staging deployment
+            - Environment: staging
+            - orders-api:1.4.0 — deployed
+            - web-frontend:3.2.0 — deployed
+            - Status: **success**
+
+  release-summary:
+    needs:
+      - deploy-staging
+    steps:
+      - name: Summarize business value
+        uses: docker://alpine:3.20
+        shell: sh
+        run: |
+          echo "Release standardized using a reusable platform workflow pattern"
+          echo "Developer teams keep their preferred tools"
+          echo "Leadership gets consistent release visibility"
+      - name: Publish evidence
+        uses: https://github.com/cloudbees-io/publish-evidence-item@v1
+        with:
+          content: |-
+            ## Release summary — Horizon Health
+            | Stage | Status |
+            | --- | --- |
+            | Golden-path validation | passed |
+            | QA deployment | success |
+            | Automated validation | passed |
+            | Staging deployment | success |
+
+            Standardized release via a reusable platform workflow. Release: **COMPLETE**

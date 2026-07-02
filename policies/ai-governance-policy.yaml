@@ -1,0 +1,9 @@
+policy:
+  name: ai-governance-policy
+  description: Mock AI governance policy for customer conversations about AI-assisted software delivery
+  controls:
+    requireSharedContext: true
+    restrictUnapprovedMcpServers: true
+    requireHumanApprovalForProductionChanges: true
+    logAssistantActions: true
+  demoTalkingPoint: Use this to discuss how platform teams can enable AI while maintaining control and auditability.

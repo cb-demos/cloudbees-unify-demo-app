@@ -1,0 +1,21 @@
+evidence:
+  release: customer-portal-2026.07.01
+  components:
+    - name: orders-api
+      version: 1.4.0
+      ciStatus: passed
+      securityStatus: passed
+      deployedTo:
+        - staging
+        - prod
+    - name: web-frontend
+      version: 3.2.0
+      ciStatus: passed
+      securityStatus: passed
+      deployedTo:
+        - staging
+  approvals:
+    - group: release-management
+      status: approved
+    - group: security
+      status: approved

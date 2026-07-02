@@ -1,0 +1,7 @@
+servicenow:
+  change: CHG-10482
+  risk: medium
+  status: approved
+  requestedBy: release.manager@example.com
+  implementationWindow: Saturday 22:00-23:00 ET
+  backoutPlan: Roll back Helm release to previous approved artifact version.

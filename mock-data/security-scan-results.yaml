@@ -1,0 +1,11 @@
+security:
+  tool: mock-sca-sast
+  component: orders-api
+  commit: abc1234
+  results:
+    critical: 0
+    high: 0
+    medium: 3
+    low: 12
+  policyStatus: passed
+  notes: Medium and low findings accepted under current policy for demo purposes.
