@@ -25,6 +25,22 @@ on:
           - research-data
         default: patient-portal
 
+metadata:
+  stages/v1alpha1:
+    - name: Release Readiness
+      jobs:
+        - platform-golden-path
+    - name: QA
+      jobs:
+        - deploy-qa
+        - automated-validation
+    - name: Staging
+      jobs:
+        - deploy-staging
+    - name: Post-Release
+      jobs:
+        - release-summary
+
 jobs:
   platform-golden-path:
     steps:
